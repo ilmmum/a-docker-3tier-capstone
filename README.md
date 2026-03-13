@@ -36,4 +36,22 @@ MongoDB Database
 
 ---
 
-## Project Structure
+## Project Structure / Deployment Plan
+
+---
+Your Laptop
+     │
+     ▼
+Git Push
+     │
+     ▼
+GitHub Repository
+     │
+     ▼
+GitHub Actions (CI Pipeline)
+     │
+     ▼
+Azure Virtual Machine
+     │
+     ▼
+Docker Containers Running Online
