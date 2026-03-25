@@ -1,30 +1,58 @@
-const express = require("express");
-const {MongoClient} = require("mongodb");
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-const url = "mongodb://db:27017";
-const client =new MongoClient(url);
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-let database;
+// MongoDB Connection
+const mongoURI = process.env.MONGODB_URI || 'mongodb://mongodb:27017/dockerapp';
 
-async function connectDB() {
-  await client.connect();
-  database = client.db("appdb");
-  console.log("Connected to MondoDB");
-}
-connectDB();
+mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log('✅ MongoDB Connected Successfully'))
+.catch(err => console.log('❌ MongoDB Connection Error:', err));
 
-app.get("/", (req, res) => {
- res.send("Backend API running with MongoDB");
+// Health Check Endpoint
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        service: 'backend-api',
+        database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    });
 });
 
-app.get("/data", async (req, res) => {
- const collection =database.collection("test");
- await collection.insertOne({ message: "Hello from MongoDB"});
- const data = await collection.find().toArray();res.json(data);
+// Root Endpoint
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Welcome to Docker 3-Tier Application API',
+        endpoints: {
+            health: '/health',
+            api: '/api'
+        }
+    });
 });
 
-app.listen(3000, () =>{
- console.log("Server running on port 3000");
+// Sample Data Endpoint
+app.get('/api/data', async (req, res) => {
+    res.json({
+        message: 'Sample data from backend',
+        data: [
+            { id: 1, name: 'Item 1' },
+            { id: 2, name: 'Item 2' }
+        ]
+    });
+});
+
+// Start Server
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
 });
