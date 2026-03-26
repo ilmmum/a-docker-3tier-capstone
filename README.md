@@ -349,7 +349,7 @@ Through this project, I have demonstrated:
 👤 Author
 Your NameOluwole Olajide
 
-GitHub: @yourusernameilmmum
+GitHub: @ilmmum
 
 Project Repository: a-docker-3tier-capstone
 
